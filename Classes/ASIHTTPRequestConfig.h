@@ -53,3 +53,16 @@ This config option is not used for apps targeting Mac OS X
 	#define REACHABILITY_20_API 0
 #endif
 
+
+// ======
+// Auto-updated of Network indicator (iPhone only)
+// ======
+
+/*
+ Some users manage the own network indicator handling on iPhone and 
+ we don't want to interfere with their changes - set this to 0 or define
+ the value outside of this file to change our default behavior
+ */
+#ifndef ASI_AUTOUPDATE_NETWORK_INDICATOR
+	#define ASI_AUTOUPDATE_NETWORK_INDICATOR 1
+#endif

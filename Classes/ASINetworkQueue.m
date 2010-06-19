@@ -8,6 +8,7 @@
 
 #import "ASINetworkQueue.h"
 #import "ASIHTTPRequest.h"
+#import "ASIHTTPRequestConfig.h"
 
 // Private stuff
 @interface ASINetworkQueue ()
@@ -49,7 +50,7 @@
 
 - (void)updateNetworkActivityIndicator
 {
-#if TARGET_OS_IPHONE
+#if defined(TARGET_OS_IPHONE) && ASI_AUTOUPDATE_NETWORK_INDICATOR==1
 	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:[self isNetworkActive]];
 #endif
 }
