@@ -12,6 +12,11 @@
 
 @optional
 
+// optinal method to determine if delegate callbacks should occur on the 
+// main UI thread or on the internal run loop thread - if not specified,
+// will default to YES
+- (BOOL)requestShouldBeOnMainThread;
+
 // These are the default delegate methods for request status
 // You can use different ones by setting didStartSelector / didFinishSelector / didFailSelector
 - (void)requestStarted:(ASIHTTPRequest *)request;

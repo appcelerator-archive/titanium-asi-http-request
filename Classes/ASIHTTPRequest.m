@@ -1504,7 +1504,15 @@ static BOOL isiPhoneOS2;
 
 #pragma mark handling request complete / failure
 
-
+- (BOOL)performDelegateOnMainThread
+{
+	if ([[self delegate] respondsToSelector:@selector(requestShouldBeOnMainThread)])
+	{
+		id value = [[self delegate] performSelector:@selector(requestShouldBeOnMainThread)];
+		return [value boolValue];
+	}
+	return YES;
+}
 
 - (void)requestReceivedResponseHeaders
 {
@@ -1513,12 +1521,22 @@ static BOOL isiPhoneOS2;
 	}
 	// Let the delegate know we have started
 	if ([self didReceiveResponseHeadersSelector] && [[self delegate] respondsToSelector:[self didReceiveResponseHeadersSelector]]) {
-		[[self delegate] performSelectorOnMainThread:[self didReceiveResponseHeadersSelector] withObject:self waitUntilDone:[NSThread isMainThread]];		
+		if ([self performDelegateOnMainThread]) {
+			[[self delegate] performSelectorOnMainThread:[self didReceiveResponseHeadersSelector] withObject:self waitUntilDone:[NSThread isMainThread]];		
+		}
+		else {
+			[[self delegate] performSelector:[self didReceiveResponseHeadersSelector] withObject:self];
+		}
 	}
 	
 	// Let the queue know we have started
 	if ([[self queue] respondsToSelector:@selector(requestReceivedResponseHeaders:)]) {
-		[[self queue] performSelectorOnMainThread:@selector(requestReceivedResponseHeaders:) withObject:self waitUntilDone:[NSThread isMainThread]];		
+		if ([self performDelegateOnMainThread]) {
+			[[self queue] performSelectorOnMainThread:@selector(requestReceivedResponseHeaders:) withObject:self waitUntilDone:[NSThread isMainThread]];		
+		}
+		else {
+			[[self queue] performSelector:@selector(requestReceivedResponseHeaders:) withObject:self];		
+		}
 	}
 }
 
@@ -1529,12 +1547,22 @@ static BOOL isiPhoneOS2;
 	}
 	// Let the delegate know we have started
 	if ([self didStartSelector] && [[self delegate] respondsToSelector:[self didStartSelector]]) {
-		[[self delegate] performSelectorOnMainThread:[self didStartSelector] withObject:self waitUntilDone:[NSThread isMainThread]];		
+		if ([self performDelegateOnMainThread]) {
+			[[self delegate] performSelectorOnMainThread:[self didStartSelector] withObject:self waitUntilDone:[NSThread isMainThread]];		
+		}
+		else {
+			[[self delegate] performSelector:[self didStartSelector] withObject:self];		
+		}
 	}
 	
 	// Let the queue know we have started
 	if ([[self queue] respondsToSelector:@selector(requestStarted:)]) {
-		[[self queue] performSelectorOnMainThread:@selector(requestStarted:) withObject:self waitUntilDone:[NSThread isMainThread]];		
+		if ([self performDelegateOnMainThread]) {
+			[[self queue] performSelectorOnMainThread:@selector(requestStarted:) withObject:self waitUntilDone:[NSThread isMainThread]];		
+		}
+		else {
+			[[self queue] performSelector:@selector(requestStarted:) withObject:self];		
+		}
 	}
 }
 
@@ -1550,12 +1578,22 @@ static BOOL isiPhoneOS2;
 	}
 	// Let the delegate know we are done
 	if ([self didFinishSelector] && [[self delegate] respondsToSelector:[self didFinishSelector]]) {
-		[[self delegate] performSelectorOnMainThread:[self didFinishSelector] withObject:self waitUntilDone:[NSThread isMainThread]];		
+		if ([self performDelegateOnMainThread]) {
+			[[self delegate] performSelectorOnMainThread:[self didFinishSelector] withObject:self waitUntilDone:[NSThread isMainThread]];		
+		}
+		else {
+			[[self delegate] performSelector:[self didFinishSelector] withObject:self];		
+		}
 	}
 	
 	// Let the queue know we are done
 	if ([[self queue] respondsToSelector:@selector(requestFinished:)]) {
-		[[self queue] performSelectorOnMainThread:@selector(requestFinished:) withObject:self waitUntilDone:[NSThread isMainThread]];		
+		if ([self performDelegateOnMainThread]) {
+			[[self queue] performSelectorOnMainThread:@selector(requestFinished:) withObject:self waitUntilDone:[NSThread isMainThread]];		
+		}
+		else {
+			[[self queue] performSelector:@selector(requestFinished:) withObject:self];		
+		}
 	}
 	
 }
@@ -1600,12 +1638,22 @@ static BOOL isiPhoneOS2;
 
 	// Let the delegate know something went wrong
 	if ([failedRequest didFailSelector] && [[failedRequest delegate] respondsToSelector:[failedRequest didFailSelector]]) {
-		[[failedRequest delegate] performSelectorOnMainThread:[failedRequest didFailSelector] withObject:failedRequest waitUntilDone:[NSThread isMainThread]];	
+		if ([self performDelegateOnMainThread]) {
+			[[failedRequest delegate] performSelectorOnMainThread:[failedRequest didFailSelector] withObject:failedRequest waitUntilDone:[NSThread isMainThread]];	
+		}
+		else {
+			[[failedRequest delegate] performSelector:[failedRequest didFailSelector] withObject:failedRequest];	
+		}
 	}
 	
 	// Let the queue know something went wrong
 	if ([[failedRequest queue] respondsToSelector:@selector(requestFailed:)]) {
-		[[failedRequest queue] performSelectorOnMainThread:@selector(requestFailed:) withObject:failedRequest waitUntilDone:[NSThread isMainThread]];		
+		if ([self performDelegateOnMainThread]) {
+			[[failedRequest queue] performSelectorOnMainThread:@selector(requestFailed:) withObject:failedRequest waitUntilDone:[NSThread isMainThread]];		
+		}
+		else {
+			[[failedRequest queue] performSelector:@selector(requestFailed:) withObject:failedRequest];		
+		}
 	}
 	
 	[self markAsFinished];
@@ -2056,7 +2104,12 @@ static BOOL isiPhoneOS2;
 	}
 	
 	if ([authenticationDelegate respondsToSelector:@selector(proxyAuthenticationNeededForRequest:)]) {
-		[authenticationDelegate performSelectorOnMainThread:@selector(proxyAuthenticationNeededForRequest:) withObject:self waitUntilDone:[NSThread isMainThread]];
+		if ([self performDelegateOnMainThread]) {
+			[authenticationDelegate performSelectorOnMainThread:@selector(proxyAuthenticationNeededForRequest:) withObject:self waitUntilDone:[NSThread isMainThread]];
+		}
+		else {
+			[authenticationDelegate performSelector:@selector(proxyAuthenticationNeededForRequest:) withObject:self];
+		}
 		return YES;
 	}
 	return NO;
@@ -2241,7 +2294,12 @@ static BOOL isiPhoneOS2;
 	}
 	
 	if ([authenticationDelegate respondsToSelector:@selector(authenticationNeededForRequest:)]) {
-		[authenticationDelegate performSelectorOnMainThread:@selector(authenticationNeededForRequest:) withObject:self waitUntilDone:[NSThread isMainThread]];
+		if ([self performDelegateOnMainThread]) {
+			[authenticationDelegate performSelectorOnMainThread:@selector(authenticationNeededForRequest:) withObject:self waitUntilDone:[NSThread isMainThread]];
+		}
+		else {
+			[authenticationDelegate performSelector:@selector(authenticationNeededForRequest:) withObject:self];
+		}
 		return YES;
 	}
 	return NO;
@@ -2527,7 +2585,12 @@ static BOOL isiPhoneOS2;
 			NSData *data = [NSData dataWithBytes:buffer length:bytesRead];
 			[invocation setArgument:&data atIndex:3];
 			[invocation retainArguments];
-			[invocation performSelectorOnMainThread:@selector(invokeWithTarget:) withObject:[self delegate] waitUntilDone:[NSThread isMainThread]];
+			if ([self performDelegateOnMainThread]) {
+				[invocation performSelectorOnMainThread:@selector(invokeWithTarget:) withObject:[self delegate] waitUntilDone:[NSThread isMainThread]];
+			}
+			else {
+				[invocation performSelector:@selector(invokeWithTarget:) withObject:[self delegate]];
+			}
 
 		// Are we downloading to a file?
 		} else if ([self downloadDestinationPath]) {
