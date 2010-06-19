@@ -152,6 +152,9 @@ extern unsigned long const ASIWWANBandwidthThrottleAmount;
 	// When the request fails or completes successfully, complete will be true
 	BOOL complete;
 	
+	// Internally used to track a cancel before the main run loop fires
+	BOOL cancelled;
+	
 	// If an error occurs, error will contain an NSError
 	// If error code is = ASIConnectionFailureErrorType (1, Connection failure occurred) - inspect [[error userInfo] objectForKey:NSUnderlyingErrorKey] for more information
 	NSError *error;
