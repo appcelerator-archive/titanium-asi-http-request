@@ -401,6 +401,11 @@ extern unsigned long const ASIWWANBandwidthThrottleAmount;
 	
 	// Will be ASIHTTPRequestRunLoopMode for synchronous requests, NSDefaultRunLoopMode for all other requests
 	NSString *runLoopMode;
+	
+	// optipnal method to determine if delegate callbacks should occur on the 
+	// main UI thread or on the internal run loop thread - if not specified,
+	// will default to YES
+	BOOL shouldPerformCallbacksOnMainThread;
 }
 
 #pragma mark init / dealloc
@@ -490,10 +495,10 @@ extern unsigned long const ASIWWANBandwidthThrottleAmount;
 - (void)incrementUploadSizeBy:(long long)length;
 
 // Helper method for interacting with progress indicators to abstract the details of different APIS (NSProgressIndicator and UIProgressView)
-+ (void)updateProgressIndicator:(id)indicator withProgress:(unsigned long long)progress ofTotal:(unsigned long long)total;
++ (void)updateProgressIndicator:(id)indicator withProgress:(unsigned long long)progress ofTotal:(unsigned long long)total mainThread:(BOOL)mainThread;
 
 // Helper method used for performing invocations on the main thread (used for progress)
-+ (void)performSelector:(SEL)selector onTarget:(id)target withObject:(id)object amount:(void *)amount;
++ (void)performSelector:(SEL)selector onTarget:(id)target withObject:(id)object amount:(void *)amount mainThread:(BOOL)mainThread;
 
 #pragma mark handling request complete / failure
 
@@ -778,4 +783,5 @@ extern unsigned long const ASIWWANBandwidthThrottleAmount;
 @property (assign) BOOL shouldUseRFC2616RedirectBehaviour;
 @property (assign, readonly) BOOL connectionCanBeReused;
 @property (retain, readonly) NSNumber *requestID;
+@property (assign) BOOL shouldPerformCallbacksOnMainThread;
 @end

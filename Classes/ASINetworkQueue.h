@@ -65,6 +65,7 @@
 	// Storage container for additional queue information.
 	NSDictionary *userInfo;
 	
+	BOOL shouldPerformCallbacksOnMainThread;
 }
 
 // Convenience constructor
@@ -97,6 +98,7 @@
 @property (assign) SEL requestDidFailSelector;
 @property (assign) SEL queueDidFinishSelector;
 @property (assign) BOOL shouldCancelAllRequestsOnFailure;
+@property (assign) BOOL shouldPerformCallbacksOnMainThread;
 @property (assign) id delegate;
 @property (assign) BOOL showAccurateProgress;
 @property (assign, readonly) int requestsCount;

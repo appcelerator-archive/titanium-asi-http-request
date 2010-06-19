@@ -111,18 +111,18 @@
 	SEL selector = @selector(setMaxValue:);
 	if ([progressDelegate respondsToSelector:selector]) {
 		double max = 1.0;
-		[ASIHTTPRequest performSelector:selector onTarget:progressDelegate withObject:nil amount:&max];
+		[ASIHTTPRequest performSelector:selector onTarget:progressDelegate withObject:nil amount:&max mainThread:shouldPerformCallbacksOnMainThread];
 	}
 	selector = @selector(setDoubleValue:);
 	if ([progressDelegate respondsToSelector:selector]) {
 		double value = 0.0;
-		[ASIHTTPRequest performSelector:selector onTarget:progressDelegate withObject:nil amount:&value];
+		[ASIHTTPRequest performSelector:selector onTarget:progressDelegate withObject:nil amount:&value mainThread:shouldPerformCallbacksOnMainThread];
 	}
 #else
 	SEL selector = @selector(setProgress:);
 	if ([progressDelegate respondsToSelector:selector]) {
 		float value = 0.0f;
-		[ASIHTTPRequest performSelector:selector onTarget:progressDelegate withObject:nil amount:&value];
+		[ASIHTTPRequest performSelector:selector onTarget:progressDelegate withObject:nil amount:&value mainThread:shouldPerformCallbacksOnMainThread];
 	}
 #endif
 }
@@ -247,7 +247,7 @@
 {
 	[self setBytesDownloadedSoFar:[self bytesDownloadedSoFar]+bytes];
 	if ([self downloadProgressDelegate]) {
-		[ASIHTTPRequest updateProgressIndicator:[self downloadProgressDelegate] withProgress:[self bytesDownloadedSoFar] ofTotal:[self totalBytesToDownload]];
+		[ASIHTTPRequest updateProgressIndicator:[self downloadProgressDelegate] withProgress:[self bytesDownloadedSoFar] ofTotal:[self totalBytesToDownload] mainThread:shouldPerformCallbacksOnMainThread];
 	}
 }
 
@@ -255,7 +255,7 @@
 {
 	[self setBytesUploadedSoFar:[self bytesUploadedSoFar]+bytes];
 	if ([self uploadProgressDelegate]) {
-		[ASIHTTPRequest updateProgressIndicator:[self uploadProgressDelegate] withProgress:[self bytesUploadedSoFar] ofTotal:[self totalBytesToUpload]];
+		[ASIHTTPRequest updateProgressIndicator:[self uploadProgressDelegate] withProgress:[self bytesUploadedSoFar] ofTotal:[self totalBytesToUpload] mainThread:shouldPerformCallbacksOnMainThread];
 	}
 }
 
@@ -327,6 +327,7 @@
 @synthesize bytesDownloadedSoFar;
 @synthesize totalBytesToDownload;
 @synthesize shouldCancelAllRequestsOnFailure;
+@synthesize shouldPerformCallbacksOnMainThread;
 @synthesize uploadProgressDelegate;
 @synthesize downloadProgressDelegate;
 @synthesize requestDidStartSelector;
