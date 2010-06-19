@@ -184,9 +184,13 @@
 	if ([self haveBuiltPostBody]) {
 		return;
 	}
+
 	if (![[self requestMethod] isEqualToString:@"PUT"]) {
-		[self setRequestMethod:@"POST"];
+		if ([[self postData] count] > 0 || [[self fileData]count] > 0){
+			[self setRequestMethod:@"POST"];
+		}
 	}
+
 	
 #if DEBUG_FORM_DATA_REQUEST
 	[self setDebugBodyString:@""];	
